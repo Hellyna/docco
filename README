@@ -8,24 +8,28 @@
 
 
 Docco is a quick-and-dirty, hundred-line-long, literate-programming-style
-documentation generator. For more information, see:
+documentation generator. This supports recursive document generating without
+filename clashing, forked from the original docco from Jeremy Ashkenas.
 
-http://jashkenas.github.com/docco/
+
+Current Repo: https://github.com/hellyna/docco
+Original Repo: https://github.com/jashkenas/docco
 
 Installation:
 
-  sudo npm install -g docco
+  sudo npm install -g @hellyna/docco
 
 Usage: docco [options] FILES
 
   Options:
 
-    -h, --help             output usage information
-    -V, --version          output the version number
-    -l, --layout [layout]  choose a built-in layouts (parallel, linear)
-    -c, --css [file]       use a custom css file
-    -o, --output [path]    use a custom output path
-    -t, --template [file]  use a custom .jst template
-    -e, --extension [ext]  use the given file extension for all inputs
-    -L, --languages [file] use a custom languages.json
-    -m, --marked [file]    use custom marked options
+    -h, --help                output usage information
+    -V, --version             output the version number
+    -l, --layout [layout]     choose a built-in layouts (parallel, linear)
+    -c, --css [file]          use a custom css file
+    -o, --output [path]       use a custom output path
+    -t, --template [file]     use a custom .jst template
+    -e, --extension [ext]     use the given file extension for all inputs
+    -L, --languages [file]    use a custom languages.json
+    -m, --marked [file]       use custom marked options
+    -u, --urlprefix [prefix]  prefix to prepend before urls (href).
