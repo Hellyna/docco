@@ -1,5 +1,5 @@
 {
-  "name": "docco",
+  "name": "@hellyna/docco",
   "description": "The Quick and Dirty Literate Programming Documentation Generator, Recursive Version",
   "keywords": [
     "documentation",
