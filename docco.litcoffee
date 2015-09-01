@@ -194,11 +194,19 @@ and rendering it to the specified output path.
 
     write = (source, sections, config) ->
 
-      destination = (file) ->
+      getpaths = (file) ->
         _extname = path.extname file
         _dirname = path.dirname file
         _basename = path.basename(file, _extname)
-        path.join(config.output, "#{_dirname}/#{_basename}.html")
+        urlprefix = config.urlprefix
+        baseurl = if urlprefix? then urlprefix else '/'
+        relpath = path.join _dirname, "#{_basename}.html"
+        return {
+          url: path.join(baseurl, relpath)
+          filepath: path.join(config.output, relpath)
+          cssurl: path.join(baseurl, path.basename config.css)
+          relpath
+        }
 
 The **title** of the file is either the first heading in the prose, or the
 name of the source file.
@@ -208,12 +216,17 @@ name of the source file.
       first = marked.lexer(firstSection.docsText)[0] if firstSection
       hasTitle = first and first.type is 'heading' and first.depth is 1
       title = if hasTitle then first.text else path.basename source
+      paths = getpaths source
+      filepath = paths.filepath
+      url = paths.url
+      cssurl = paths.cssurl
 
-      html = config.template {sources: config.sources, css: path.basename(config.css),
-        title, hasTitle, sections, path, destination,}
+      html = config.template {sources: config.sources, cssurl,
+        title, hasTitle, sections, path, getpaths}
 
-      console.log "docco: #{source} -> #{destination source}"
-      fs.writeFileSync destination(source), html
+      console.log "docco: #{source} -> #{filepath}"
+      mkdirp.sync path.dirname filepath
+      fs.writeFileSync filepath, html
 
 
 Configuration
@@ -223,6 +236,7 @@ Default configuration **options**. All of these may be extended by
 user-specified options.
 
     defaults =
+      urlprefix: '/'
       layout:     'parallel'
       output:     'docs'
       template:   null
@@ -279,6 +293,7 @@ Require our external dependencies.
     marked      = require 'marked'
     commander   = require 'commander'
     highlightjs = require 'highlight.js'
+    mkdirp      = require 'mkdirp'
 
 Languages are stored in JSON in the file `resources/languages.json`.
 Each item maps the file extension to the name of the language and the
@@ -336,6 +351,7 @@ Parse options using [Commander](https://github.com/visionmedia/commander.js).
         .option('-t, --template [file]',  'use a custom .jst template', c.template)
         .option('-e, --extension [ext]',  'assume a file extension for all inputs', c.extension)
         .option('-m, --marked [file]',    'use custom marked options', c.marked)
+        .option('-u, --urlprefix [prefix]', 'set a custom url prefix', c.urlperfix)
         .parse(args)
         .name = "docco"
       if commander.args.length
